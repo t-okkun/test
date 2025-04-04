@@ -17,7 +17,5 @@ public class Players {
 	private String position;
 	private String subposition;
 	private String detail;
-	
-	
-//a
+
 }
