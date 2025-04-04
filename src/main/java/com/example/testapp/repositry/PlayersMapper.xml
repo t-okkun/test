@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.testapp.repositry.PlayersMapper">
+<!-- 全件検索 -->
+<select id="selectAll" resultType="com.example.testapp.entity.Players">
+select id,team,name,number,tanb,position,subposition,detail from players
+</select>
+<!-- 名前検索 -->
+<select id ="selectByNameLike"  resultType="com.example.testapp.entity.Players">
+select * from players where name  LIKE '%' || #{name} || '%'
+</select>
+<!-- 登録 -->
+<insert id="insert">
+insert into players (team, name, number, tandb, position, subposition, detail)
+values
+(#{team},#{name},#{number},#{tandb},#{position},#{subposition},#{detail})
+</insert>
+<!-- 更新 -->
+<update id="update">
+update players set team=#{team}, name=#{name}, number=#{number}, tandb=#{tandb},
+ position=#{position},subposition=#{subposition}, detail=#{detail} where id=#{id}
+</update>
+<!-- 選手名で削除 -->
+<delete id="deleteByName">
+delete from players where name=#{name}
+</delete>
+<!-- 全チームを取得 -->
+    <select id="selectAllTeam" resultType="string">
+        SELECT DISTINCT team FROM players
+    </select>
+
+    <!-- チームごとの選手一覧 -->
+    <select id="selectByTeam" resultType="com.example.testapp.entity.Players">
+        SELECT * FROM players WHERE team = #{team} ORDER BY position, name
+    </select>
+
+<!--     指定チームのポジション一覧を取得 -->
+<!--    <select id="selectPositionByTeam" resultType="com.example.testapp.entity.Players">-->
+<!--        SELECT DISTINCT position FROM players WHERE team = #{team} ORDER BY position-->
+<!--    </select>-->
+
+	<!-- ポジションごとの選手 -->
+	<select id="selectPlayersByTeamGroupedByPosition" resultType="map">
+    SELECT * 
+    FROM players 
+    WHERE team = #{team} 
+    ORDER BY position, name
+	</select>
+	
+
+     <!--ポジションごとの選手一覧   -->
+    <select id="selectByPosition"  resultType="com.example.testapp.entity.Players">
+        SELECT *
+        FROM players
+        WHERE position = #{position} 
+        ORDER BY team, name
+    </select>
+    </mapper>
+
+   

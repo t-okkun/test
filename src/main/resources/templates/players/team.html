@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>チーム一覧</title>
+</head>
+<body>
+	<h1>チーム一覧</h1>
+	<ul>
+		<li th:each="team : ${team}">
+			<a th:href="@{/players/{team}(team=${team})}"th:text="${team}"></a>
+		</li>
+	</ul>
+	<!--menuへ戻る-->
+	<a th:href="@{menu}">メニュー画面</a>
+</body>
+</html>

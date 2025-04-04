@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>選手登録</title>
+</head>
+<body>
+    <h1>選手登録</h1>
+
+    <!-- 選手登録フォーム -->
+    <form th:action="@{/insert}"th:object="${player}" method="POST" >
+		<input type="hidden" th:field="*{id}">
+		
+		<table>
+		<tr>
+        	<label for="team">所属球団　:</label>
+        	<input type="text" id="team" th:field="*{team}" placeholder="チーム名" required/><br>
+		</tr>
+		<tr>
+			<label for="name">選手名　　:</label>
+        	<input type="text" id="name" th:field="*{name}" placeholder="選手名" required/><br>        
+		</tr>
+		<tr>
+        	<label for="number">背番号　　:</label>
+      	    <input type="number" id="number" th:field="*{number}" placeholder="背番号" required/><br>
+		</tr>
+		<tr>
+			<label for="tandb">投/打 　　:</label>
+			<input type="text" id="tandb" th:field="*{tandb}" placeholder="投/打" required/><br>
+		</tr>
+		<tr>		
+      		<label for="position">メイン守備:</label>
+     	    <input type="text" id="position" th:field="*{position}" placeholder="メインポジション" required/><br>
+		</tr>
+		<tr>		
+      		<label for="subposition">サブ守備　:</label>
+     	    <input type="text" id="subposition" th:field="*{subposition}" placeholder="サブポジション" required/><br>
+		</tr>
+		<tr>
+			<label for="detail">選手説明等</label>
+		</tr>
+		<tr>
+			<td colspan="2">
+    	    <textarea id="detail" th:field="*{detail}" placeholder="選手説明等" rows="5" cols="35"required></textarea><br>
+		</td>
+		</tr>
+	</table>	
+	
+        <button type="submit">登録</button>
+    </form>
+
+    <!-- メニュー画面に戻るリンク -->
+    <a th:href="@{/menu}">メニューに戻る</a>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="${team} + 'の選手一覧'"></title>
+</head>
+<body>
+	<h1 th:text="${team} + 'の選手一覧'"></h1>
+	<div th:each="entry : ${playersByPosition}">
+	        <h2 th:text="${entry.key}"></h2> <!-- ポジション名 -->
+	        <ul>
+	            <li th:each="player : ${entry.value}" >
+					<a th:href="@{/players/detail/{name}(name=${player})}"
+				 	th:text="${player}"></a>
+				</li> <!-- 選手名 -->
+	        </ul>
+	    </div>
+		<a href="/team">チーム一覧へ戻る</a>
+		<br>
+		<a href="/menu">メニュー画面</a>
+</body>
+</html>
