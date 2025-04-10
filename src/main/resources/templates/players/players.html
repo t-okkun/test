@@ -9,8 +9,8 @@
 	        <h2 th:text="${entry.key}"></h2> <!-- ポジション名 -->
 	        <ul>
 	            <li th:each="player : ${entry.value}" >
-					<a th:href="@{/players/detail/{name}(name=${player})}"
-				 	th:text="${player}"></a>
+					<a th:href="@{/players/detail/{name}(name=${player.name})}"
+				 	th:text="${player.name}"></a>
 				</li> <!-- 選手名 -->
 	        </ul>
 	    </div>

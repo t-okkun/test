@@ -7,41 +7,42 @@
     <h1>選手検索</h1>
 
     <!-- 検索フォーム -->
-    <form action="/search" method="get">
-		<label for="playerName">選手名　:</label>
-        <input type="text" name="playerName" placeholder="選手名を入力" />
-		<br>
-	 	<label for="position">守備位置:</label>
+	<form action="/search" method="get">
+	    <label for="playerName">選手名 :</label>
+	    <input type="text" id="playerName" name="playerName" placeholder="選手名を入力" />
+	    <br>
+	    <label for="position">守備位置:</label>
+<!--		<select id="position" name="position">-->
+<!--			<option value="">選択してください</option>-->
+<!--			        守備位置（ロール）のリストを表示 -->
+				   
+<!--			       <th:block th:each="position : ${positions}">-->
+<!--			           <option th:value="${position.name}" th:text="${position.name}"></option>-->
+<!--			       </th:block>-->
+<!--		</select>-->
 	    <input type="text" id="position" name="position" placeholder="守備位置を入力" />
-		<br>
-		<br>
-        <button type="submit">検索</button>
-    </form>
+	    <br><br>
+	    <button type="submit">検索</button>
+	</form>
 
-    <!-- 検索結果 -->
-    <div th:if="${players != null}">
-        <h2>検索結果:</h2>
-        <ul>
-			<li th:each="player : ${players}">
-			          <!-- 選手詳細ページへのリンク -->
-			          <a th:href="@{/players/detail/{name}(name=${player.name})}">
-						  <span th:text="${player.team}">チーム</span> -
-			              <span th:text="${player.name}">選手名</span> - 
-						  <span th:text="${player.position}"></span>
+	<div th:if="${players != null}">
+	    <h2>検索結果:</h2>
+	    <ul>
+	        <li th:each="player : ${players}">
+	            <a th:href="@{/players/detail/{name}(name=${player.name})}">
+	                <span th:text="${player.team.name}">チーム</span> -
+	                <span th:text="${player.name}">選手名</span> -
+	                <span th:text="${player.position.name}">ポジション</span>
+	            </a>
+	        </li>
+	    </ul>
+	</div>
 
-			          </a>
-		     </li>
-        </ul>
-    </div>
+	<div th:if="${message != null}">
+	    <p th:text="${message}"></p>
+	</div>
 
-	   <div th:if="${message != null}">
-	       <p th:text="${message}"></p>
-	   </div>
-
-	   
-    <div th:if="${message != null}">
-        <p th:text="${message}"></p>
-    </div>
 	<a href="/menu">メニュー画面</a>
+
 </body>
 </html>

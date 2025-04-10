@@ -25,8 +25,8 @@ public class SearchController {
 	public String showSearchPage(
 	    @RequestParam(required = false) String playerName, 
 	    @RequestParam(required = false) String position, 
-	    Model model) {
-	    
+	    Model model) {		 
+		 
 	    if (playerName != null && !playerName.isEmpty()) {
 	        // 選手名で検索
 	        List<Players> playersByName = playersService.findPlayersByNameLike(playerName);

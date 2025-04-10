@@ -7,6 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.testapp.entity.Players;
+import com.example.testapp.entity.Position;
+import com.example.testapp.entity.Subposition;
+import com.example.testapp.entity.Team;
 
 /**
  * Players:リポジトリ
@@ -18,25 +21,43 @@ public interface PlayersMapper {
 	List<Players> selectByNameLike(@Param("name") String name);
 	
 	void insert(Players players);
+	
 	void update(Players players);
 	void deleteByName(@Param("name") String name);
 	
 	//チームの取得
 	List<String> selectAllTeam();
 	
+	//ポジションの取得
+	List<String> selectAllPosition();
+
 	//チームごとに選手一覧を取得
-	Map<String, List<Players>> selectByTeam(String team);
+	List<Players> selectByTeam(@Param("teamId") Integer teamId);
 	
 	//指定チームのポジション位置を取得
-	List<String>selectPositionByTeam(String team);
+	List<Integer>selectPositionByTeam(Integer teamId);
 	
 	//チーム・ポジションごとに選手一覧
-	List<Players> selectTeamAndPosition(@Param("team") String team,@Param("position") String position);
+	List<Players> selectTeamAndPosition(@Param("teamId") Integer teamId,@Param("positionId") String positionName);
 
-	List<Map<String, Object>> selectPlayersByTeamGroupedByPosition(String team);
+	List<Map<String, Object>> selectPlayersByTeamGroupedByPosition(@Param("teamName") String teamName);
 	
-	List<Players> selectByPosition(@Param("position") String position);
-
+	List<Players> selectByPosition(String position);
+	Integer selectTeamIdByName(String teamName);
 	
+	List<Players> selectAllSubposition();
 
+	List<Subposition> selectSubpositionsByIds(@Param("ids") List<Integer> ids);
+	
+	Team selectTeamByName(String name);
+	
+	Position selectPositionByName(String name);
+	
+	List<Team> setAllTeams();
+	   // チームIDに基づいてチーム情報を取得
+    Team selectTeamById(Integer teamId);  // id はチームのIDを示す
+    
+    List<Position> setAllPositions();
+    
+    Position selectPositionById(Integer positionId);
 }

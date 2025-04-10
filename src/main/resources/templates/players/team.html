@@ -5,12 +5,13 @@
 </head>
 <body>
 	<h1>チーム一覧</h1>
-	<ul>
-		<li th:each="team : ${team}">
-			<a th:href="@{/players/{team}(team=${team})}"th:text="${team}"></a>
-		</li>
-	</ul>
+	<!-- チーム情報を表示 -->
+	  <div th:each="team : ${teams}">
+	      <a th:href="@{/players/{id}(id=${team})}" th:text="${team}"></a>
+	  </div>
+	<!-- メニュー画面へのリンク -->
 	<!--menuへ戻る-->
+	<br>
 	<a th:href="@{menu}">メニュー画面</a>
 </body>
 </html>

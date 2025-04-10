@@ -7,14 +7,28 @@
     <h1>選手登録</h1>
 
     <!-- 選手登録フォーム -->
-    <form th:action="@{/insert}"th:object="${player}" method="POST" >
+    <form th:action="@{players/insert}"th:object="${player}" method="POST" >
 		<input type="hidden" th:field="*{id}">
 		
 		<table>
-		<tr>
-        	<label for="team">所属球団　:</label>
-        	<input type="text" id="team" th:field="*{team}" placeholder="チーム名" required/><br>
-		</tr>
+			
+			<tr>
+			        	<label for="team">所属球団　:</label>
+						<select th:field="*{team.id}"required>
+							<option value="" disabled slected>チーム名</option>
+							<option th:each="team : ${teams}" 
+									th:value="${team.id}" 
+									th:text="${team.name}">
+								
+							</option>	
+						</select> 
+			        	<br>
+					</tr>
+<!--					<tr>-->
+<!--							<label for="team">所属球団　:</label>-->
+<!--							<input type="text" id="team" th:field="*{team}" placeholder="所属球団" required/><br>-->
+<!--						</tr>	-->
+					
 		<tr>
 			<label for="name">選手名　　:</label>
         	<input type="text" id="name" th:field="*{name}" placeholder="選手名" required/><br>        
@@ -27,18 +41,45 @@
 			<label for="tandb">投/打 　　:</label>
 			<input type="text" id="tandb" th:field="*{tandb}" placeholder="投/打" required/><br>
 		</tr>
-		<tr>		
-      		<label for="position">メイン守備:</label>
-     	    <input type="text" id="position" th:field="*{position}" placeholder="メインポジション" required/><br>
-		</tr>
-		<tr>		
-      		<label for="subposition">サブ守備　:</label>
-     	    <input type="text" id="subposition" th:field="*{subposition}" placeholder="サブポジション" required/><br>
-		</tr>
 		<tr>
-			<label for="detail">選手説明等</label>
-		</tr>
-		<tr>
+				     <label for="position">メイン守備:</label>
+				               <select th:field="*{position.id}" required>
+								<option value="" disabled selected>ポジション</option>
+				                   <option th:each="position : ${positions}" 
+								   		   th:value="${position.id}" 
+										   th:text="${position.name}">
+									   </option>
+				               </select><br>
+			    </tr>
+		
+<!--		<tr>-->
+<!--		     <label for="position">メイン守備:</label>-->
+<!--			 <input type="text" id="position" th:field="*{position}" placeholder="メイン守備" required/><br>-->
+<!--	    </tr>-->
+
+<!--		<tr>-->
+<!--				    <label for="subpositions">サブ守備:</label>-->
+<!--				    <select id="subpositions" th:field="*{subpositions}" multiple required>-->
+<!--				        <option th:each="subposition : ${subpositions}" -->
+<!--						th:value="${subposition}" -->
+<!--						th:text="${subposition}">-->
+<!--						サブポジション</option>-->
+<!--				    </select><br>-->
+<!--				</tr>-->
+		
+				<tr>
+   					 <label for="subpositions">サブ守備:</label>
+   						 <div>
+     				   <th:block th:each="subposition : ${subpositions}">
+        			    <label>
+       		 		        <input type="checkbox" th:name="'subpositions'" th:value="${subposition}" />
+          				      <span th:text="${subposition}"></span>
+            			</label><br>
+  				      </th:block>
+   					 </div><br>
+				</tr>
+
+			<tr>
 			<td colspan="2">
     	    <textarea id="detail" th:field="*{detail}" placeholder="選手説明等" rows="5" cols="35"required></textarea><br>
 		</td>

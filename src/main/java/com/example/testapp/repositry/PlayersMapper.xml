@@ -2,59 +2,220 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.testapp.repositry.PlayersMapper">
 <!-- 全件検索 -->
-<select id="selectAll" resultType="com.example.testapp.entity.Players">
-select id,team,name,number,tanb,position,subposition,detail from players
+<select id="selectAll" resultMap="PlayersWithTeamResultMap">
+   SELECT 
+        players.id,
+        players.name AS players_name,
+        teams.name AS team,
+        players.number,
+        players.tandb,
+        positions.name AS position,
+        sub_pos.name AS subposition_name,
+        sub_pos.id AS subposition_id,
+        players.detail
+    FROM 
+        players
+    JOIN 
+        teams ON players.team_id = teams.id
+    JOIN 
+        positions ON players.position_id = positions.id
+	LEFT JOIN 
+        player_subpositions ps ON players.id = ps.player_id
+    LEFT JOIN 
+        positions sub_pos ON ps.position_id = sub_pos.id
 </select>
+
 <!-- 名前検索 -->
-<select id ="selectByNameLike"  resultType="com.example.testapp.entity.Players">
-select * from players where name  LIKE '%' || #{name} || '%'
+<select id ="selectByNameLike"  resultMap="PlayersWithTeamResultMap">
+SELECT 
+        players.id,
+        players.name,
+        t.name AS team_name,
+        players.number,
+        players.tandb,
+        pos.name AS position_name,
+        sub_pos.name AS subposition_name,
+        sub_pos.id AS subposition_id,
+        players.detail
+    FROM 
+        players
+    JOIN 
+        teams t ON players.team_id = t.id
+    JOIN 
+        positions pos ON players.position_id = pos.id
+     LEFT JOIN 
+        player_subpositions ps ON players.id = ps.player_id
+    LEFT JOIN 
+        positions sub_pos ON ps.position_id = sub_pos.id  
+    WHERE 
+        players.name LIKE '%' || #{name} || '%'
 </select>
+
+<resultMap id="PlayersWithTeamResultMap" type="com.example.testapp.entity.Players">
+    <id property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="tandb" column="tandb"/>
+    <result property="number" column="number"/>
+    <result property="detail" column="detail"/>
+
+    <!-- Team オブジェクトにマッピング -->
+    <association property="team" javaType="com.example.testapp.entity.Team">
+        <id property="id" column="team_id"/>
+        <result property="name" column="team_name"/>
+    </association>
+
+    <!-- Position オブジェクトにマッピング -->
+    <association property="position" javaType="com.example.testapp.entity.Position">
+        <id property="id" column="position_id"/>
+        <result property="name" column="position_name"/>
+    </association>
+
+    <!-- Subpositions オブジェクトにマッピング -->
+    <collection property="subpositions" ofType="com.example.testapp.entity.Position">
+        <id property="id" column="subposition_id"/>
+        <result property="name" column="subposition_name"/>
+    </collection>
+</resultMap>
+
+
+
 <!-- 登録 -->
 <insert id="insert">
-insert into players (team, name, number, tandb, position, subposition, detail)
+insert into players (team_id, name, number, tandb, position_id, player_subpositions, detail)
 values
-(#{team},#{name},#{number},#{tandb},#{position},#{subposition},#{detail})
+(#{teamId},#{name},#{number},#{tandb},#{positionId},#{playerSubpositions},#{detail})
 </insert>
 <!-- 更新 -->
 <update id="update">
-update players set team=#{team}, name=#{name}, number=#{number}, tandb=#{tandb},
- position=#{position},subposition=#{subposition}, detail=#{detail} where id=#{id}
+update players set team_id=#{teamId}, name=#{name}, number=#{number}, tandb=#{tandb},
+ position_id=#{positionId},player_subpositions=#{player_subpositions}, detail=#{detail} where id=#{id}
 </update>
 <!-- 選手名で削除 -->
 <delete id="deleteByName">
 delete from players where name=#{name}
 </delete>
+
+
 <!-- 全チームを取得 -->
-    <select id="selectAllTeam" resultType="string">
-        SELECT DISTINCT team FROM players
+    <select id="setAllTeam" resultType="string">
+        SELECT name 
+        FROM teams
+    </select>
+  
+
+    <select id="setAllTeams" resultType="com.example.testapp.entity.Team">
+        SELECT * FROM teams;  <!-- 実際のテーブル名に合わせて調整 -->
+    </select>
+  <!-- チームIDを使ってチームを取得するクエリ -->
+    <select id="selectTeamById" resultType="com.example.testapp.entity.Team">
+        SELECT * FROM teams WHERE id = #{teamId}
+    </select>
+
+
+	<select id="setAllPositions" resultType="com.example.testapp.entity.Position">
+	SELECT * FROM positions;
+	</select>
+     <select id="selectPositionById" resultType="com.example.testapp.entity.Position">
+        SELECT * FROM positions WHERE id = #{positionId}
+    </select>
+    
+    
+<!-- 全てのポジションを取得するクエリ -->
+<select id="selectAllPosition" resultType="string">
+    SELECT name
+    FROM positions
+</select>
+
+
+
+
+<!-- 全てのサブポジションを取得するクエリ -->
+<select id="selectAllSubposition" resultType="string">
+    SELECT name 
+    FROM positions
+    </select>
+ <!-- サブポジションIDリストを基にSubpositionを取得 -->
+ <select id="findSubpositionsByIds" resultType="com.example.testapp.entity.Subposition">
+        SELECT * FROM subposition WHERE id IN 
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 
     <!-- チームごとの選手一覧 -->
     <select id="selectByTeam" resultType="com.example.testapp.entity.Players">
-        SELECT * FROM players WHERE team = #{team} ORDER BY position, name
+       SELECT 
+        players.id,
+        teams.name AS team,
+        players.name,
+        players.number,
+        players.tandb,
+        positions.name AS position,
+        players.detail
+    FROM 
+        players
+    JOIN 
+        teams ON players.team_id = teams.id
+    JOIN 
+        positions ON players.position_id = positions.id
+    WHERE 
+        players.team_id = #{teamId}
+    ORDER BY 
+        positions.id, players.name
+       
     </select>
+    
+	<!-- ポジションごとの選手名 -->
+ <select id="selectPlayersByTeamGroupedByPosition" resultType="map">
+    SELECT pos.name AS position, p.name AS name
+    FROM players p
+    JOIN teams t ON p.team_id = t.id
+    JOIN positions pos ON p.position_id = pos.id
+    WHERE t.name = #{teamName}
+    ORDER BY pos.name
+</select>
+ 
 
-<!--     指定チームのポジション一覧を取得 -->
-<!--    <select id="selectPositionByTeam" resultType="com.example.testapp.entity.Players">-->
-<!--        SELECT DISTINCT position FROM players WHERE team = #{team} ORDER BY position-->
-<!--    </select>-->
-
-	<!-- ポジションごとの選手 -->
-	<select id="selectPlayersByTeamGroupedByPosition" resultType="map">
-    SELECT * 
-    FROM players 
-    WHERE team = #{team} 
-    ORDER BY position, name
-	</select>
+    <!-- 結果マップを定義 -->
+    <resultMap id="teamPositionResultMap" type="java.util.Map">
+        <id property="position" column="position"/>
+        <result property="players" column="players"/>
+    </resultMap>
 	
 
-     <!--ポジションごとの選手一覧   -->
-    <select id="selectByPosition"  resultType="com.example.testapp.entity.Players">
-        SELECT *
-        FROM players
-        WHERE position = #{position} 
-        ORDER BY team, name
+     <!--指定ポジションの選手詳細   -->
+    <select id="selectByPosition"  resultMap="PlayersWithTeamResultMap">
+    SELECT 
+        players.id,
+        players.name,
+        t.name AS team_name,
+        players.number,
+        players.tandb,
+        pos.name AS position_name,
+        sub_pos.name AS subposition_name,
+        sub_pos.id AS subposition_id,
+        players.detail
+    FROM 
+        players
+    JOIN 
+        teams t ON players.team_id = t.id
+    JOIN 
+        positions pos ON players.position_id = pos.id
+     LEFT JOIN 
+        player_subpositions ps ON players.id = ps.player_id
+    LEFT JOIN 
+        positions sub_pos ON ps.position_id = sub_pos.id  
+    WHERE 
+        pos.name = #{position}
+    ORDER BY 
+        t.id, players.name
     </select>
+    
+    <select id="selectTeamIdByName" parameterType="string" resultType="int">
+    SELECT id FROM teams WHERE name = #{teamName}
+</select>
+    
+    
     </mapper>
 
    

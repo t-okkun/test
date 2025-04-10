@@ -4,8 +4,6 @@
     <title>選手詳細</title>
 </head>
 <body>
-    <!-- 選手の名前を表示 -->
-    <h1 th:text="${player.name}"></h1>
     
     <!-- 選手の詳細情報を表示 -->
     <table>
@@ -15,7 +13,7 @@
         </tr>
         <tr>
             <th>チーム</th>
-            <td th:text="${player.team}"></td>
+            <td th:text="${player.team.name}"></td>
         </tr>
         <tr>
             <th>背番号</th>
@@ -27,21 +25,34 @@
         </tr>
         <tr>
             <th>ポジション</th>
-            <td th:text="${player.position}"></td>
+            <td th:text="${player.position.name}"></td>
         </tr>
 		<tr>
-            <th>サブポジション</th>
-            <td th:text="${player.subposition}"></td>
-        </tr>
+		    <th>サブポジション</th>
+		    <td>
+		        <ul>
+		            <li th:each="subposition : ${player.subpositions}"> 
+		                <spanspan th:text="${subposition.name != null ? subposition.name : (未設定)}"></span>
+					</li>
+		        </ul>
+		        <span th:if="${player.subpositions == null or player.subpositions.isEmpty()}">サブポジションなし</span>
+		    </td>
+		</tr>
         <tr>
             <th>詳細</th>
             <td th:text="${player.detail}"></td>
         </tr>
+		
     </table>
     
     <!-- 戻るリンク -->
-	<a th:href="@{/players/{team}(team=${team})}"> 選手一覧へ戻る</a>
+	<a th:href="@{/players/{team}(team=${player.team.name})}"> 選手一覧へ戻る</a>
 	<br>
+	
+	<!-- チーム一覧へ戻るリンク -->
+	<a th:href="@{/team}">チーム一覧へ戻る</a>
+	<br>
+	
 	<!--menuへ戻る-->
 		<a th:href="@{/menu}">メニュー画面</a>
 </body>
